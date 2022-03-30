@@ -140,7 +140,6 @@ void print_matrix(int** matrix, int row, int col)
     }
 }
 
-
 /* free memory allocated by create_matrix() */
 int free_matrix(int** matrix, int row, int col)
 {
@@ -149,7 +148,6 @@ int free_matrix(int** matrix, int row, int col)
     }
     free(matrix);
 }
-
 
 /* assign random values to the given matrix */
 int fill_data(int** matrix, int row, int col)
@@ -197,7 +195,12 @@ int subtraction_matrix(int** matrix_a, int** matrix_b, int row, int col)
 /* transpose the matrix to matrix_t */
 int transpose_matrix(int** matrix, int** matrix_t, int row, int col)
 {
-    
+    int i, j;
+    for (i = 0; i < col; i++) {
+        for (j = 0; j < row; j++) {
+            matrix_t[j][i] = matrix[i][j];
+        }
+    }
 }
 
 /* matrix_axt - matrix_a x matrix_t */
