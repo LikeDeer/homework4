@@ -95,7 +95,7 @@ int main()
 /* create a 2d array whose size is row x col using malloc() */
 int** create_matrix(int row, int col)
 {
-    int** dptr = NULL;
+    int** dptr = NULL;          // returning 
     int i;
 
     if (row <= 0 || col <= 0) {
@@ -109,7 +109,8 @@ int** create_matrix(int row, int col)
 
     for (i = 0; i < row; i++) {
         *(dptr + i) = (int *)malloc(col * sizeof(int));             // = dptr[i] : element of pointer array
-        if ((*dptr + i) == NULL) {                                 //              which points the (logical) 2d array's ith row.
+                                                                    //              which points the (logical) 2d array's ith row.
+        if ((*dptr + i) == NULL) {
             printf("!Memory Allocation Failed!\n");
             exit(1);
         }
@@ -194,7 +195,9 @@ int fill_data(int** matrix, int row, int col)
 
     for (i = 0; i < row; i++) {
         for (j = 0; j < col; j++) {
-            matrix[i][j] = rand() % 20;
+            matrix[i][j] = rand() % 20;                     // We can access to the array with either matrix[i][j] or *(*(matrix + i) + j)
+                                                            //  since they are compiled as the same.
+                                                            // I coded as prior because of its intuitiveness.
         }
     }
 
@@ -211,7 +214,9 @@ int fill_data(int** matrix, int row, int col)
 int addition_matrix(int** matrix_a, int** matrix_b, int row, int col)
 {
     int i, j;
-    int** matrix_temp;
+    int** matrix_temp;                                                  // matrix_temp : a row X col matrix which will be created like
+                                                                        //                matrix_a and matrix_b for the purpose of
+                                                                        //                saving and printing the addition result temporarily
 
     /* Check pre conditions */
 	if (row <= 0 || col <= 0) {
@@ -220,10 +225,14 @@ int addition_matrix(int** matrix_a, int** matrix_b, int row, int col)
 	}
 
     matrix_temp = create_matrix(row, col);
+
+    /* Check if the previous allocation was successful */
     if (matrix_temp == NULL) {
         return -1;
     }
 
+
+    /* Operating matrix addition */
     for (i = 0; i < row; i++) {
         for (j = 0; j < col; j++) {
             matrix_temp[i][j] = matrix_a[i][j] + matrix_b[i][j];
@@ -247,7 +256,10 @@ int addition_matrix(int** matrix_a, int** matrix_b, int row, int col)
 int subtraction_matrix(int** matrix_a, int** matrix_b, int row, int col)
 {
     int i, j;
-    int** matrix_temp;
+    int** matrix_temp;                                                  // matrix_temp : a row X col matrix which will be created like
+                                                                        //                matrix_a and matrix_b for the purpose of
+                                                                        //                saving and printing the subtraction result temporarily
+
 
     /* Check pre conditions */
 	if (row <= 0 || col <= 0) {
@@ -255,7 +267,14 @@ int subtraction_matrix(int** matrix_a, int** matrix_b, int row, int col)
 		return -1;
 	}
 
+    /* Operating matrix subtraction */
     matrix_temp = create_matrix(row, col);
+
+    /* Check if the previous allocation was successful */
+    if (matrix_temp == NULL) {
+        return -1;
+    }
+
     for (i = 0; i < row; i++) {
         for (j = 0; j < col; j++) {
             matrix_temp[i][j] = matrix_a[i][j] - matrix_b[i][j];
@@ -286,6 +305,8 @@ int transpose_matrix(int** matrix, int** matrix_t, int row, int col)
 		return -1;
 	}
 
+
+    /* Operating transposition */
     for (i = 0; i < col; i++) {
         for (j = 0; j < row; j++) {
             matrix_t[j][i] = matrix[i][j];
@@ -305,7 +326,10 @@ int transpose_matrix(int** matrix, int** matrix_t, int row, int col)
 int multiply_matrix(int** matrix_a, int** matrix_t, int row, int col)
 {
     int i, j, k;
-    int** matrix_temp;
+    int** matrix_temp;                                                  // matrix_temp : a row X row matrix since we are going to multiply
+                                                                        //                row X col and col X row matrices.
+                                                                        //                saving and printing the multiplication result temporarily
+
     int sum = 0;
 
     /* Check pre conditions */
@@ -316,6 +340,7 @@ int multiply_matrix(int** matrix_a, int** matrix_t, int row, int col)
 
     matrix_temp = create_matrix(row, row);
 
+    /* Operating matrix multiplication */
     for (i = 0; i < row; i++) {
         for (j = 0; j < row; j++) {
             for (k = 0; k < col; k++) {
@@ -325,6 +350,7 @@ int multiply_matrix(int** matrix_a, int** matrix_t, int row, int col)
             sum = 0;
         }
     }
+    /* matrix multiplication is quite more complex than matrix addition and subtraction */
 
     /* Check post conditions */
     if (matrix_t == NULL || matrix_temp ==NULL) {
