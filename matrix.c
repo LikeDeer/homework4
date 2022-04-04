@@ -32,7 +32,7 @@ int main()
     if (matrix_a == NULL || matrix_b == NULL) {return -1;}
 
     do{
-        printf("\n----------------------------------------------------------------\n");
+        printf("\n----------------------------------------------------------------\n");         // Added '\n' for a better layout.
         printf("                     Matrix Manipulation                        \n");
         printf("----------------------------------------------------------------\n");
         printf(" Initialize Matrix   = z           Print Matrix        = p \n");
@@ -95,15 +95,26 @@ int main()
 /* create a 2d array whose size is row x col using malloc() */
 int** create_matrix(int row, int col)
 {
-    int** dptr;
+    int** dptr = NULL;
     int i;
 
-    for (i = 0; i < row; i++)
-        dptr = (int **)malloc(row * sizeof(int *));
+    if (row <= 0 || col <= 0) {
+        printf("Check the size of row and col!\n");
+        return NULL;
+    }
+
+    dptr = (int **)malloc(row * sizeof(int *));
+    if (dptr == NULL)
+        return NULL;
 
     for (i = 0; i < row; i++) {
-        *(dptr + i) = (int *)malloc(col * sizeof(int));
+        *(dptr + i) = (int *)malloc(col * sizeof(int));             // = dptr[i] : element of pointer array
+        if ((*dptr + i) == NULL) {                                 //              which points the (logical) 2d array's ith row.
+            printf("!Memory Allocation Failed!\n");
+            exit(1);
+        }
     }
+
     return dptr;
 }
 
@@ -111,6 +122,12 @@ int** create_matrix(int row, int col)
 void print_matrix(int** matrix, int row, int col)
 {
     int i, j;
+
+    /* Check pre conditions */
+	if (row <= 0 || col <= 0) {
+		printf("Check the size of row and col!\n");
+		return;
+	}
 
 /* printing table */
     // printing first horizontal line of table
@@ -138,26 +155,56 @@ void print_matrix(int** matrix, int row, int col)
         }
         printf("-\n");
     }
+
+	/* Check post conditions */
+	 if (matrix == NULL) {
+		printf("Memory Allocation Failed.\n");
+		return;
+	}
 }
 
 /* free memory allocated by create_matrix() */
+ /* first free the row pointer array and then free the double pointer (which have meant matrix) */
 int free_matrix(int** matrix, int row, int col)
 {
+    /* Check pre conditions */
+	if (row <= 0 || col <= 0) {
+		printf("Check the size of row and col!\n");
+		return -1;
+	}
+
     for (int i = 0; i < row; i++) {
         free(matrix[i]);
     }
     free(matrix);
+
+    return 1;
 }
 
 /* assign random values to the given matrix */
 int fill_data(int** matrix, int row, int col)
 {
     int i, j;
+
+    /* Check pre conditions */
+	if (row <= 0 || col <= 0) {
+		printf("Check the size of row and col!\n");
+		return -1;
+	}
+
     for (i = 0; i < row; i++) {
         for (j = 0; j < col; j++) {
             matrix[i][j] = rand() % 20;
         }
     }
+
+    /* Check post conditions */
+    if (matrix == NULL) {
+		printf("Memory Allocation Failed.\n");
+		return -1;
+    }
+
+    return 1;
 }
 
 /* matrix_sum = matrix_a + matrix_b */
@@ -165,15 +212,35 @@ int addition_matrix(int** matrix_a, int** matrix_b, int row, int col)
 {
     int i, j;
     int** matrix_temp;
+
+    /* Check pre conditions */
+	if (row <= 0 || col <= 0) {
+		printf("Check the size of row and col!\n");
+		return -1;
+	}
+
     matrix_temp = create_matrix(row, col);
+    if (matrix_temp == NULL) {
+        return -1;
+    }
+
     for (i = 0; i < row; i++) {
         for (j = 0; j < col; j++) {
             matrix_temp[i][j] = matrix_a[i][j] + matrix_b[i][j];
         }
     }
+
+    /* Check post conditions */
+	if (matrix_a == NULL || matrix_b == NULL || matrix_temp == NULL) {
+		printf("Memory Allocation Failed.\n");
+		return -1;
+	}
+
     printf("The result is..\n");
     print_matrix(matrix_temp, row, col);
     free_matrix(matrix_temp, row, col);
+
+    return 1;
 }
 
 /* matrix_sub = matrix_a - matrix_b */
@@ -181,26 +248,57 @@ int subtraction_matrix(int** matrix_a, int** matrix_b, int row, int col)
 {
     int i, j;
     int** matrix_temp;
+
+    /* Check pre conditions */
+	if (row <= 0 || col <= 0) {
+		printf("Check the size of row and col!\n");
+		return -1;
+	}
+
     matrix_temp = create_matrix(row, col);
     for (i = 0; i < row; i++) {
         for (j = 0; j < col; j++) {
             matrix_temp[i][j] = matrix_a[i][j] - matrix_b[i][j];
         }
     }
+
+    /* Check post conditions */
+    if (matrix_a == NULL || matrix_b == NULL || matrix_temp == NULL) {
+		printf("Memory Allocation Failed.\n");
+		return -1;
+	}
+
     printf("The result is..\n");
     print_matrix(matrix_temp, row, col);
     free_matrix(matrix_temp, row, col);
+
+    return 1;
 }
 
 /* transpose the matrix to matrix_t */
 int transpose_matrix(int** matrix, int** matrix_t, int row, int col)
 {
     int i, j;
+
+    /* Check pre conditions */
+	if (row <= 0 || col <= 0) {
+		printf("Check the size of row and col!\n");
+		return -1;
+	}
+
     for (i = 0; i < col; i++) {
         for (j = 0; j < row; j++) {
             matrix_t[j][i] = matrix[i][j];
         }
     }
+
+    /* Check post conditions */
+    if (matrix == NULL || matrix_t ==NULL) {
+		printf("Memory Allocation Failed.\n");
+		return -1;
+    }
+
+    return 1;
 }
 
 /* matrix_axt - matrix_a x matrix_t */
@@ -209,19 +307,32 @@ int multiply_matrix(int** matrix_a, int** matrix_t, int row, int col)
     int i, j, k;
     int** matrix_temp;
     int sum = 0;
+
+    /* Check pre conditions */
+	if (row <= 0 || col <= 0) {
+		printf("Check the size of row and col!\n");
+		return -1;
+	}
+
     matrix_temp = create_matrix(row, row);
+
     for (i = 0; i < row; i++) {
         for (j = 0; j < row; j++) {
             for (k = 0; k < col; k++) {
                 sum += matrix_a[i][k] * matrix_t[k][j];
             }
             matrix_temp[i][j] = sum;
+            sum = 0;
         }
     }
+
+    /* Check post conditions */
+    if (matrix_t == NULL || matrix_temp ==NULL) {
+		printf("Memory Allocation Failed.\n");
+		return -1;
+	}
+
     printf("The result is..\n");
     print_matrix(matrix_temp, row, row);
     free_matrix(matrix_temp, row, row);
 }
-
-
-// additional custom functions
